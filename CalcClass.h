@@ -25,7 +25,7 @@ class calc
 		if (res >= 2.7182 && res <= 2.7184) { cout << "e" << endl; return; }
 		if (res >= 1.3590 && res <= 1.3592) { cout << "e/2" << endl; return; }
 
-		cout << fixed << setprecision(5) <<res << endl;
+		cout <<"结果是: "<< fixed << setprecision(5) <<res << endl;
 	}
 
 public:
