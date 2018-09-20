@@ -184,7 +184,7 @@ calc::token calc::getOp(double &value,const double &x)
 		case'^':++expression; return calc::EXP;
 	}
 
-	if (*expression == 'π') //处理表达式中的π
+	if (*expression == 'p') //处理表达式中的π
 	{
 		value = 3.1415926536;
 		++expression;
@@ -204,18 +204,52 @@ calc::token calc::getOp(double &value,const double &x)
 		if(*(++expression)!='n') { cerr << "sin符号不完整！！" << endl;  exit(1); }
 		++expression;  if (*expression != '(') { cerr << "sin后面的表达式要接括号！" << endl; exit(1); }
 		char tmps[100]; int i = 0; //创建tmps字符串，把sin后面的表达式写进tmps
-		while (*expression != ')')
+		int leftkhcount = 1;   //保存读到的左括号数，用于与右括号匹配，开始循环前是1个
+		int rightkhcount = 0; //保存读到的右括号数
+		while (rightkhcount<leftkhcount )
 		{
 			tmps[i] = *expression;
 			++i;
 			++expression;
+
+			if (*expression == '(') ++leftkhcount;
+			if (*expression == ')') ++rightkhcount;
 		}
-		tmps[i] = ')';  tmps[i + 1] = '\0';  //给tmps加上\0
+		
+		tmps[i] = ')'; tmps[i + 1] = '\0'; //本应用do while，但懒得改了，直接补一个')'，再补一个\0就好了
 
 		++expression; //跳到 )后面那个
 
 		double xofsin = 0;  calc exp1(tmps); xofsin = exp1.result(x);  //计算出sin后面表达式的值，保存在xofsin中
 		value = sin(xofsin);  //用sin(xofsin)修改value的值
+
+		return calc::VALUE;
+	}
+
+	if (*expression == 'c')  //表达式中的cos，其规则是后面的东西用括号括起来
+	{
+		if (*(++expression) != 'o') { cerr << "cos符号不完整！！" << endl;  exit(1); }
+		if (*(++expression) != 's') { cerr << "cos符号不完整！！" << endl;  exit(1); }
+		++expression;  if (*expression != '(') { cerr << "cos后面的表达式要接括号！" << endl; exit(1); }
+		char tmps[100]; int i = 0; //创建tmps字符串，把cos后面的表达式写进tmps
+		int leftkhcount = 1;   //保存读到的左括号数，用于与右括号匹配，开始循环前是1个
+		int rightkhcount = 0; //保存读到的右括号数
+		while (rightkhcount<leftkhcount)
+		{
+			tmps[i] = *expression;
+			++i;
+			++expression;
+
+			if (*expression == '(') ++leftkhcount;
+			if (*expression == ')') ++rightkhcount;
+		}
+
+		tmps[i] = ')'; tmps[i + 1] = '\0'; //本应用do while，但懒得改了，直接补一个')'，再补一个\0就好了
+
+		++expression; //跳到 )后面那个
+
+		double xofcos = 0;  calc exp1(tmps); xofcos = exp1.result(x);  //计算出cos后面表达式的值，保存在xofcos中
+		value = cos(xofcos);  //用sin(xofsin)修改value的值
 
 		return calc::VALUE;
 	}
@@ -242,9 +276,9 @@ double calc::integral()
 	cin >> low;
 	cout << "上限:";
 	cin >> high;
-	for (x = low; x <= high; x += 0.00001)
+	for (x = low; x <= high; x += 0.000005)
 	{
-		Res += result(x)*0.00001;
+		Res += result(x)*0.000005;
 	}
 	display(Res);
 	return Res;
